@@ -27,14 +27,14 @@ Function Get-SiteCertificate{
         #disabling the cert validation check. This is what makes this whole thing work with invalid certs...
         [Net.ServicePointManager]::ServerCertificateValidationCallback = {$true}
 
-    if (-not ([System.Management.Automation.PSTypeName]'CertificateInformtation').Type){
+        if (-not ([System.Management.Automation.PSTypeName]'CertificateInformtation').Type){
             Write-Verbose 'Addding Type CertificateInfo'
             Add-Type -TypeDefinition $CertificateInfo
         }
     }
     
     PROCESS{
-            $url | Foreach{
+        $url | Foreach{
             Write-Verbose "Checking $_"
         
             $req = [Net.HttpWebRequest]::Create($_)
@@ -46,19 +46,19 @@ Function Get-SiteCertificate{
             catch{
                 throw
             }
-    
+
             $properties = @{
                 Name = $req.ServicePoint.Certificate.GetName()
-                PublicKey = $req.ServicePoint.Certificate.GetPublicKeyString()
+                Certificate = $req.ServicePoint.Certificate.GetRawCertDataString()
                 SerialNumber = $req.ServicePoint.Certificate.GetSerialNumberString()
                 Thumbprint = $req.ServicePoint.Certificate.GetCertHashString()
                 EffectiveDate = Get-Date($req.ServicePoint.Certificate.GetEffectiveDateString())
                 Issuer = $req.ServicePoint.Certificate.GetIssuerName()
                 ExpirationDate = Get-Date($req.ServicePoint.Certificate.GetExpirationDateString())
             }
+
             $Cert = New-Object -TypeName CertificateInformtation -Property $properties
             Write-Output $Cert
-   
         }
     }
 }

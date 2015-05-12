@@ -5,7 +5,7 @@ public class CertificateInformtation
 {
 
     public string Name { get; set; }
-    public string PublicKey { get; set; }
+    public string Certificate { get; set; }
     public string SerialNumber { get; set; }
     public string Thumbprint { get; set; }
     public string Issuer { get; set; }
@@ -17,7 +17,9 @@ public class CertificateInformtation
     public double ExpiresIn()
     {
         DateTime today = DateTime.Today;
-        return (ExpirationDate - today).TotalDays;
+        double totalDays = (ExpirationDate - today).TotalDays;
+
+        return Math.Round(totalDays, MidpointRounding.AwayFromZero);
 
     }
 }
